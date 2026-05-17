@@ -210,6 +210,7 @@ Skill 검증은 Anthropic Skill Creator의 eval/benchmark, 실제 작업 A/B 비
 ```powershell
 uv add requests
 uv add --dev pytest
+uv run coding-agent-dev-template
 uv run ruff format .
 uv run ruff check .
 uv run pyright

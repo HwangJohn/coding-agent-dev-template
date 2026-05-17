@@ -10,6 +10,9 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = []
 
+[project.scripts]
+coding-agent-dev-template = "coding_agent_dev_template.cli:main"
+
 [dependency-groups]
 dev = [
   "hatchling>=1.27",
