@@ -77,6 +77,8 @@ uv run pytest
 ├── tests/
 ├── skills/              # 선택 사항: 공유 Agent Skills 원본
 ├── specs/               # 선택 사항: 기능 단위 SDD 산출물
+├── scripts/
+│   └── check_agent_docs_freshness.py
 ├── docs/
 │   ├── agent-context-stack.md
 │   ├── context-grounded-workflow-validation.md
@@ -100,6 +102,7 @@ uv run pytest
 - `docs/adr/`: `AGENTS.md`에 담기에는 긴 기술 결정과 배경을 기록합니다.
 - `docs/context-grounded-workflow-validation.md`: ADR/spec 기반 workflow를 worktree로 검증한 기록입니다.
 - `docs/publication-readiness.md`: 공개 전 개인정보 점검, baseline 구조 검토, 향후 개선 트리거를 기록합니다.
+- `scripts/check_agent_docs_freshness.py`: 코드, workflow, tooling 변경에 대응하는 agent context 업데이트가 있는지 검사합니다.
 
 문서 역할은 운영 지침, 조건부 workflow, 시각 디자인, 기능 spec, 의사결정 기록으로 분리합니다. 기본 Python 작업 기준은 `AGENTS.md`에 두고, 긴 반복 절차는 skill로 분리하며, root `DESIGN.md`는 Google DESIGN.md 시각 디자인 시스템 전용으로 둡니다. 기능 단위 spec이 필요할 때는 GitHub Spec Kit나 Kiro specs처럼 도구가 기대하는 위치와 파일 구조를 따릅니다.
 
@@ -128,6 +131,16 @@ uv run pytest
 | Code intelligence | Serena MCP | LSP/JetBrains 기반 symbol 탐색과 semantic editing으로 코드 근거를 찾습니다. |
 | Continuity memory | AICTX | active task, decisions, known failures, handoff state를 repo-local memory로 유지합니다. |
 | Memory watchlist | Knowns, KnowIt, memd | cross-agent structured memory를 제공합니다. 팀 채택 전에는 보조 후보로 둡니다. |
+
+최신성 자동화는 “자동 수정”이 아니라 “자동 감지”로 시작합니다. `scripts/check_agent_docs_freshness.py`는 `src/`, `tests/`, `pyproject.toml`, CI, pre-commit, script 같은 source/tooling 변경이 있는데 `AGENTS.md`, ADR, spec, skill, `DESIGN.md`, Cursor/Claude 설정, README/docs 변경이 없으면 실패합니다.
+
+로컬 staged diff 검사:
+
+```powershell
+uv run python scripts/check_agent_docs_freshness.py --staged
+```
+
+PR에서는 GitHub Actions가 base/head diff를 기준으로 같은 검사를 수행합니다.
 
 ## Spec-Driven Development 지원
 
@@ -201,6 +214,7 @@ uv run ruff format .
 uv run ruff check .
 uv run pyright
 uv run pytest
+uv run python scripts/check_agent_docs_freshness.py --staged
 ```
 
 생성된 lockfile은 직접 편집하지 않습니다. `uv lock` 또는 `uv sync`로 갱신합니다.

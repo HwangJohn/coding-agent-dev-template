@@ -21,3 +21,8 @@ repos:
         entry: uv run pytest
         language: system
         pass_filenames: false
+      - id: agent-docs-freshness
+        name: agent docs freshness
+        entry: uv run python scripts/check_agent_docs_freshness.py --staged
+        language: system
+        pass_filenames: false

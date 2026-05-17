@@ -71,6 +71,7 @@ addopts = [
   "--cov=coding_agent_dev_template",
   "--cov-report=term-missing",
 ]
+pythonpath = ["."]
 testpaths = ["tests"]
 
 [tool.coverage.run]

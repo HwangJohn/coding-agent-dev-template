@@ -91,6 +91,8 @@ When new durable knowledge is discovered, record it in the smallest appropriate 
 - Conditional repeated workflow: `skills/<name>/SKILL.md`
 - Tool-specific loading detail: `CLAUDE.md` or `.cursor/rules/*.mdc`
 
+CI and pre-commit run `scripts/check_agent_docs_freshness.py` to detect source, workflow, or tooling changes that lack related context updates. This check does not rewrite docs automatically; it forces the missing decision to be documented or justified during review.
+
 ## Instruction and Skill Lifecycle
 
 Agent instructions are part of the project and must evolve through reviewable changes.
@@ -126,6 +128,7 @@ Use `uv` as the only dependency, environment, and command runner.
 - Lint: `uv run ruff check .`
 - Type check: `uv run pyright`
 - Test: `uv run pytest`
+- Agent docs freshness: `uv run python scripts/check_agent_docs_freshness.py --staged`
 - Full local gate: `uv run ruff format --check . && uv run ruff check . && uv run pyright && uv run pytest`
 
 Do not manually edit `uv.lock` when it exists. Regenerate it with `uv lock` or `uv sync`.

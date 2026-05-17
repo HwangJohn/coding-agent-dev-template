@@ -34,6 +34,7 @@ The repository is organized around a small, tool-neutral baseline:
 - `docs/agent-context-stack.md` defines how agents should use repo context before asking users.
 - `specs/` is reserved for optional feature-level SDD artifacts.
 - `skills/` is reserved for optional shared Agent Skills.
+- `scripts/check_agent_docs_freshness.py` detects source/tooling changes that lack related agent context updates.
 - `pyproject.toml`, `uv.lock`, Ruff, Pyright, pytest, and GitHub Actions provide deterministic gates.
 
 This baseline is intentionally conservative. It does not install external memory services, skill validators, self-evolving agents, security scanners, or API-backed wiki tools by default.
@@ -45,6 +46,7 @@ This baseline is intentionally conservative. It does not install external memory
 | Feature behavior is ambiguous or repeatedly re-explained | Add a feature spec under `specs/<feature>/` or adopt GitHub Spec Kit/OpenSpec. |
 | Architecture decisions recur in reviews | Add or update an ADR. |
 | Agents repeatedly ask questions that existing docs answer | Update `docs/agent-context-stack.md` or move the durable rule into `AGENTS.md`. |
+| Source/tooling changes land without context updates | Tighten `scripts/check_agent_docs_freshness.py` patterns or PR policy. |
 | A repeated workflow is too long for `AGENTS.md` | Add a shared skill under `skills/<name>/SKILL.md`. |
 | Shared skills need installation into multiple agents | Use `npx skills` to link/install from `skills/` into tool-specific directories. |
 | Codebase navigation becomes too slow or noisy | Evaluate Serena MCP for symbol-aware exploration. |

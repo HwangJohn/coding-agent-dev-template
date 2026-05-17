@@ -55,3 +55,18 @@ After a change, put new durable knowledge in the smallest artifact that can own 
 - Update `AGENTS.md` only for short rules every agent should always know.
 
 Do not store secrets, credentials, or sensitive customer data in agent memory, specs, ADRs, or skills.
+
+## Freshness Automation
+
+The baseline uses detection rather than automatic rewriting.
+
+`scripts/check_agent_docs_freshness.py` checks changed files and fails when source, workflow, or tooling files changed without any matching agent context artifact update.
+
+This protects against stale `AGENTS.md`, specs, ADRs, and skills while keeping the actual documentation change reviewable by humans.
+
+Examples:
+
+```powershell
+uv run python scripts/check_agent_docs_freshness.py --staged
+uv run python scripts/check_agent_docs_freshness.py --base origin/main --head HEAD
+```
