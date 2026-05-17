@@ -1,0 +1,13 @@
+---
+description: Python project workflow for source, tests, packaging, and tool configuration.
+globs:
+  - "src/**/*.py"
+  - "tests/**/*.py"
+  - "pyproject.toml"
+  - ".github/workflows/*.yml"
+alwaysApply: false
+---
+
+Use uv for all Python commands. Follow the commands and standards in @AGENTS.md.
+
+Use @AGENTS.md for project structure decisions. Use @DESIGN.md only for UI or visual design work.

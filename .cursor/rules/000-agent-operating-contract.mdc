@@ -1,0 +1,10 @@
+---
+description: Always load the repository-wide coding agent contract.
+alwaysApply: true
+---
+
+Follow @AGENTS.md as the shared project contract.
+
+If a task changes architecture, workflow, test gates, or agent behavior, update @AGENTS.md or add an ADR in @docs/adr/ in the same change.
+
+If a task creates or changes UI, also review @DESIGN.md and follow its visual tokens and component guidance.
