@@ -1,5 +1,7 @@
 # Coding Agent Python Template
 
+[English](README.en.md) | 한국어
+
 팀 내에서 Codex, Claude Code, Cursor 같은 코딩 에이전트를 전제로 Python 프로젝트를 시작하기 위한 템플릿 제안입니다.
 
 핵심 원칙은 세 가지입니다.
@@ -70,6 +72,8 @@ uv run pytest
 ├── AGENTS.md
 ├── CLAUDE.md
 ├── DESIGN.md
+├── README.md
+├── README.en.md
 ├── pyproject.toml
 ├── uv.lock
 ├── src/

@@ -6,6 +6,7 @@ import shutil
 import subprocess
 import sys
 from collections.abc import Sequence
+from pathlib import Path
 
 SOURCE_PATTERNS = (
     "src/**",
@@ -23,6 +24,7 @@ CONTEXT_PATTERNS = (
     "CLAUDE.md",
     "DESIGN.md",
     "README.md",
+    "README.en.md",
     ".cursor/rules/**",
     "docs/**",
     "specs/**",
@@ -39,13 +41,17 @@ def matches_any(path: str, patterns: Sequence[str]) -> bool:
     return any(fnmatch.fnmatchcase(normalized, pattern) for pattern in patterns)
 
 
+def repo_root() -> str:
+    return normalize_path(str(Path(__file__).resolve().parents[1]))
+
+
 def run_git(args: Sequence[str]) -> list[str]:
     git_executable = shutil.which("git")
     if git_executable is None:
         raise RuntimeError("git executable was not found on PATH")
 
     result = subprocess.run(  # noqa: S603
-        [git_executable, *args],
+        [git_executable, "-c", f"safe.directory={repo_root()}", *args],
         check=True,
         capture_output=True,
         text=True,
