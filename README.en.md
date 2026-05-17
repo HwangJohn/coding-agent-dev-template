@@ -72,6 +72,7 @@ Ongoing agent-instruction maintenance:
 ├── AGENTS.md
 ├── CLAUDE.md
 ├── DESIGN.md
+├── LICENSE
 ├── README.md
 ├── README.en.md
 ├── pyproject.toml
@@ -105,6 +106,7 @@ Ongoing agent-instruction maintenance:
 - `skills/<name>/SKILL.md`: optional conditional workflows too long for always-loaded instructions.
 - `.claude/skills/<name>/SKILL.md`: Claude Code install target or Claude-specific skill location.
 - `DESIGN.md`: defines how UI should look.
+- `LICENSE`: MIT License. Reuse requires preserving the copyright notice and license notice.
 - `docs/README.md`: inventory and lifecycle rules for accumulating Markdown documents.
 - `docs/adr/README.md`: ADR list, status, and supersession map.
 - `specs/INDEX.md`: feature spec inventory with status, implementation links, and test links.
@@ -248,3 +250,9 @@ uv run python scripts/check_agent_docs_freshness.py --staged
 ```
 
 Do not edit `uv.lock` manually. Regenerate it with `uv lock` or `uv sync`.
+
+## License
+
+This template is released under the [MIT License](LICENSE).
+
+Reuse, modification, distribution, and commercial use are allowed, but copies or substantial portions must preserve the copyright notice and license notice. In practice, this keeps the template code-friendly while requiring source attribution.

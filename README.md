@@ -72,6 +72,7 @@ uv run pytest
 ├── AGENTS.md
 ├── CLAUDE.md
 ├── DESIGN.md
+├── LICENSE
 ├── README.md
 ├── README.en.md
 ├── pyproject.toml
@@ -105,6 +106,7 @@ uv run pytest
 - `skills/<name>/SKILL.md`: 선택 사항입니다. 특정 작업을 어떤 절차로 수행할지 길게 정의해야 할 때만 추가합니다.
 - `.claude/skills/<name>/SKILL.md`: Claude Code 설치/링크 대상 또는 Claude 전용 skill 위치입니다.
 - `DESIGN.md`: UI가 어떻게 보여야 하는지 정의합니다.
+- `LICENSE`: MIT License입니다. 재사용 시 copyright notice와 license notice를 보존해야 합니다.
 - `docs/README.md`: 누적되는 Markdown 문서의 인벤토리와 lifecycle을 정의합니다.
 - `docs/adr/README.md`: ADR 목록, 상태, supersede 관계를 관리합니다.
 - `specs/INDEX.md`: 기능 spec 목록, 상태, 구현/테스트 링크를 관리합니다.
@@ -256,3 +258,9 @@ uv run python scripts/check_agent_docs_freshness.py --staged
 ```
 
 생성된 lockfile은 직접 편집하지 않습니다. `uv lock` 또는 `uv sync`로 갱신합니다.
+
+## 라이선스
+
+이 템플릿은 [MIT License](LICENSE)로 공개합니다.
+
+재사용, 수정, 배포, 상업적 사용이 가능하지만, 복사본 또는 중요한 부분에는 copyright notice와 license notice를 함께 보존해야 합니다. 즉, 출처 표기가 필요한 코드 친화적 오픈소스 라이선스로 운영합니다.
