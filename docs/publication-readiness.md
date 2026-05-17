@@ -36,6 +36,7 @@ The repository is organized around a small, tool-neutral baseline:
 - `skills/` is reserved for optional shared Agent Skills.
 - `scripts/check_agent_docs_freshness.py` detects source/tooling changes that lack related agent context updates.
 - `pyproject.toml`, `uv.lock`, Ruff, Pyright, pytest, and GitHub Actions provide deterministic gates.
+- GitHub Actions should pin third-party actions to valid published tags rather than unverified moving aliases.
 
 This baseline is intentionally conservative. It does not install external memory services, skill validators, self-evolving agents, security scanners, or API-backed wiki tools by default.
 
