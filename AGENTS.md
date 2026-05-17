@@ -33,7 +33,8 @@ Keep always-loaded instructions concise. Put detailed, conditional workflows in 
 ├── src/                              # Importable Python package code
 ├── tests/                            # pytest test suite
 ├── skills/                           # Optional canonical source for shared Agent Skills
-├── specs/                            # Optional feature-level specs and SDD artifacts
+├── specs/                            # Feature spec inventory, templates, and optional SDD artifacts
+├── docs/README.md                    # Documentation inventory and Markdown lifecycle
 ├── docs/agent-context-stack.md        # Context sources and question-reduction workflow
 ├── docs/adr/                         # Durable architecture decision records
 ├── .cursor/rules/                    # Cursor-specific rule loading and scoping
@@ -49,6 +50,7 @@ Keep always-loaded instructions concise. Put detailed, conditional workflows in 
 - `.claude/skills/*/SKILL.md` is a Claude Code install target or Claude-specific extension point, not the default source of truth for shared skills.
 - `DESIGN.md` is reserved for visual design tokens and UI guidance under the Google DESIGN.md format.
 - Feature specifications are optional. If the team adopts spec-driven development, prefer established workflows such as GitHub Spec Kit over an ad hoc root `SPEC.md`.
+- `specs/INDEX.md` is the lightweight feature spec inventory. For enforced spec lifecycle, prefer OpenSpec or GitHub Spec Kit validation over repo-local custom scripts.
 - `docs/adr/` records decisions that need rationale beyond the current agent contract.
 
 Prompts guide behavior; tools enforce behavior. Anything mandatory belongs in tests, linting, typing, CI, or a deterministic script.
@@ -93,6 +95,8 @@ When new durable knowledge is discovered, record it in the smallest appropriate 
 
 CI and pre-commit run `scripts/check_agent_docs_freshness.py` to detect source, workflow, or tooling changes that lack related context updates. This check does not rewrite docs automatically; it forces the missing decision to be documented or justified during review.
 
+Use `docs/README.md`, `docs/adr/README.md`, and `specs/INDEX.md` as lightweight Markdown inventories. When a project needs strict spec lifecycle enforcement, adopt OpenSpec or GitHub Spec Kit and use their validation/archive commands instead of adding custom spec-management scripts.
+
 ## Instruction and Skill Lifecycle
 
 Agent instructions are part of the project and must evolve through reviewable changes.
@@ -105,6 +109,7 @@ Agent instructions are part of the project and must evolve through reviewable ch
 - Add `skills/<name>/SKILL.md` only when a repeated, task-specific workflow is too long, conditional, or resource-heavy for always-loaded instructions.
 - Use an Agent Skills-compatible installer, such as `npx skills`, to install shared skills into Claude Code, Cursor, or other tool-specific skill directories.
 - Use feature-level specs for ambiguous or high-risk implementation work. Keep `AGENTS.md` as the agent operating contract; do not use a root `SPEC.md` as a replacement for it.
+- Use `specs/INDEX.md` to distinguish proposed, active, implemented, superseded, and archived specs in the lightweight path. Prefer OpenSpec `validate`, `status`, and `archive` when formal lifecycle management is required.
 
 When a recurring agent mistake or team correction appears:
 
@@ -154,8 +159,12 @@ Do not manually edit `uv.lock` when it exists. Regenerate it with `uv lock` or `
 
 - `AGENTS.md` explains the current project structure and agent instruction strategy.
 - `DESIGN.md` follows the Google Labs DESIGN.md format and defines visual identity for UI-generating tasks.
+- `docs/README.md` indexes durable Markdown files and defines document lifecycle rules.
 - `docs/adr/` records decisions that should survive beyond a single change.
+- `specs/INDEX.md` indexes feature specs and their lifecycle state.
 - When a code change changes project structure, workflow, or architecture, update `AGENTS.md` or add an ADR in the same change.
+- When a feature spec is added, updated, implemented, superseded, or archived, update `specs/INDEX.md` in the same change.
+- When spec lifecycle enforcement is needed, initialize OpenSpec or GitHub Spec Kit and wire their validation command into CI.
 - When a code change creates or changes UI, follow `DESIGN.md` and update it if the design system changes.
 
 ## Agent Configuration Changes

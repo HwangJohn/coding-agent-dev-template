@@ -80,15 +80,19 @@ uv run pytest
 │   └── coding_agent_dev_template/
 ├── tests/
 ├── skills/              # 선택 사항: 공유 Agent Skills 원본
-├── specs/               # 선택 사항: 기능 단위 SDD 산출물
+├── specs/               # 기능 단위 SDD 산출물, 인벤토리, 템플릿
+│   ├── INDEX.md
+│   └── _template/
 ├── scripts/
 │   └── check_agent_docs_freshness.py
 ├── docs/
+│   ├── README.md
 │   ├── agent-context-stack.md
 │   ├── context-grounded-workflow-validation.md
 │   ├── agent-methodology.md
 │   ├── publication-readiness.md
 │   └── adr/
+│       └── README.md
 ├── .cursor/
 │   └── rules/
 └── .github/
@@ -101,6 +105,9 @@ uv run pytest
 - `skills/<name>/SKILL.md`: 선택 사항입니다. 특정 작업을 어떤 절차로 수행할지 길게 정의해야 할 때만 추가합니다.
 - `.claude/skills/<name>/SKILL.md`: Claude Code 설치/링크 대상 또는 Claude 전용 skill 위치입니다.
 - `DESIGN.md`: UI가 어떻게 보여야 하는지 정의합니다.
+- `docs/README.md`: 누적되는 Markdown 문서의 인벤토리와 lifecycle을 정의합니다.
+- `docs/adr/README.md`: ADR 목록, 상태, supersede 관계를 관리합니다.
+- `specs/INDEX.md`: 기능 spec 목록, 상태, 구현/테스트 링크를 관리합니다.
 - `specs/<feature>/spec.md`: 선택 사항입니다. 기능 단위 요구사항, 계획, 작업 분해가 필요할 때만 GitHub Spec Kit 같은 SDD 도구가 생성/관리하게 둡니다.
 - `.kiro/specs/<feature>/requirements.md`, `design.md`, `tasks.md`: Kiro를 채택할 때의 도구 전용 spec 산출물입니다.
 - `docs/adr/`: `AGENTS.md`에 담기에는 긴 기술 결정과 배경을 기록합니다.
@@ -118,7 +125,7 @@ uv run pytest
 
 1. 현재 사용자 요청과 명시 제약
 2. `AGENTS.md`, `CLAUDE.md`, `.cursor/rules/*.mdc`
-3. `specs/`, `.specify/`, `openspec/`, `.kiro/specs/`의 기능 spec
+3. `specs/INDEX.md`와 `specs/`, `.specify/`, `openspec/`, `.kiro/specs/`의 기능 spec
 4. `docs/adr/`와 [agent-context-stack.md](docs/agent-context-stack.md)
 5. 기존 code, tests, `pyproject.toml`, CI 설정
 6. 선택적으로 연결된 Agent OS, Serena, AICTX, repo-local memory
@@ -146,6 +153,22 @@ uv run python scripts/check_agent_docs_freshness.py --staged
 
 PR에서는 GitHub Actions가 base/head diff를 기준으로 같은 검사를 수행합니다.
 
+## Markdown과 Spec Lifecycle
+
+운영 중 Markdown 파일이 쌓이는 것을 전제로, 이 템플릿은 “가까운 인벤토리에서 찾을 수 있는 문서”만 durable context로 취급합니다.
+
+| 문서 종류 | 인벤토리 | 관리 기준 |
+| --- | --- | --- |
+| 일반 docs | `docs/README.md` | 문서 역할, 갱신 시점, 폐기 기준을 기록합니다. |
+| ADR | `docs/adr/README.md` | ADR 번호, 상태, 현재 결정 여부, supersede 관계를 기록합니다. |
+| 기능 spec | `specs/INDEX.md` 또는 OpenSpec/GitHub Spec Kit artifact | 기능 경계, 상태, 구현/테스트 링크, 마지막 검토일을 기록합니다. |
+
+Spec은 PR이나 파일 단위가 아니라 사용자에게 보이는 capability, integration, workflow, migration slice, policy surface 단위로 만듭니다. 상태는 `proposed`, `active`, `implemented`, `superseded`, `archived` 중 하나로 관리합니다.
+
+구현이 끝난 spec은 지우지 않고 `implemented`로 표시한 뒤 구현과 테스트 링크를 연결합니다. 대체된 spec은 `superseded`로 표시하고 새 spec이나 ADR을 링크합니다. 오래된 spec은 먼저 상태로 숨기고, 검색 노이즈가 커질 때만 `specs/archive/<year>/`로 이동합니다.
+
+단순한 프로젝트는 `specs/INDEX.md`를 수동 인벤토리로 유지합니다. Spec lifecycle을 품질 게이트로 강제해야 하는 프로젝트는 repo-local 커스텀 스크립트보다 OpenSpec CLI의 `openspec validate --all --strict`, `openspec status`, `openspec archive`나 GitHub Spec Kit의 validation extension을 우선 검토합니다.
+
 ## Spec-Driven Development 지원
 
 코딩 에이전트 scene에서는 단일 root `SPEC.md`보다 기능 단위 spec workflow를 지원하는 도구가 더 활발하게 쓰입니다.
@@ -153,7 +176,7 @@ PR에서는 GitHub Actions가 base/head diff를 기준으로 같은 검사를 �
 | 항목 | 지원 범위 | 템플릿 배치 |
 | --- | --- | --- |
 | [GitHub Spec Kit](https://github.github.io/spec-kit/) | `specify` CLI가 프로젝트 초기화, agent별 통합, Spec → Plan → Tasks → Implement 흐름을 제공합니다. Claude Code, Cursor, Codex 등 다수 agent를 지원합니다. | 공통 spec-driven development를 도입할 때 우선 검토할 수 있는 도구입니다. |
-| [OpenSpec](https://openspec.dev/) | repo 안에 capability별 `spec.md`와 change proposal, `design.md`, `tasks.md`, spec delta를 남깁니다. Claude Code, Cursor, Codex 등 여러 도구를 지원합니다. | brownfield 프로젝트에서 기존 spec을 읽고 변경 의도만 delta로 관리할 때 유용합니다. |
+| [OpenSpec](https://openspec.dev/) | repo 안에 capability별 `spec.md`와 change proposal, `design.md`, `tasks.md`, spec delta를 남기고 `validate`, `status`, `archive` 명령으로 lifecycle을 관리합니다. Claude Code, Cursor, Codex 등 여러 도구를 지원합니다. | brownfield 프로젝트에서 기존 spec을 읽고 변경 의도만 delta로 관리할 때 유용합니다. |
 | [Kiro Specs](https://kiro.dev/docs/specs/) | Kiro IDE에서 요구사항, 설계, 작업 산출물을 `requirements.md`/`bugfix.md`, `design.md`, `tasks.md` 구조로 관리합니다. | Kiro를 사용하는 프로젝트에서 도구 전용 산출물로 관리합니다. |
 | root `SPEC.md` | 일부 커뮤니티 workflow에서 쓰이지만 경로와 의미가 도구마다 다릅니다. | 프로젝트 전체 지침은 `AGENTS.md`, 기능별 구현 계약은 SDD 도구의 `specs/<feature>/` 산출물로 분리합니다. |
 | `specs.md`, Spec Coding, SpecWeave 등 | spec-driven development 방법론과 템플릿을 제공합니다. | 팀 workflow에 맞는 원칙과 템플릿을 선택적으로 참고합니다. |
@@ -163,6 +186,16 @@ Spec Kit 도입 예시는 다음과 같습니다.
 ```powershell
 uvx --from git+https://github.com/github/spec-kit.git specify init . --integration claude
 uvx --from git+https://github.com/github/spec-kit.git specify integration install cursor-agent
+```
+
+OpenSpec 도입 예시는 다음과 같습니다.
+
+```powershell
+npm install -g @fission-ai/openspec@latest
+openspec init --tools claude,cursor,codex
+openspec validate --all --strict
+openspec status
+openspec archive <change-name>
 ```
 
 이 경우에도 `AGENTS.md`는 agent 운영 계약으로 유지하고, `.specify/memory/constitution.md`나 `specs/<feature>/spec.md`는 기능 구현 계약으로 사용합니다. Root `DESIGN.md`는 Google DESIGN.md 시각 디자인 시스템 전용입니다.

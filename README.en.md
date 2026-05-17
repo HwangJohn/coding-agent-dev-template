@@ -80,15 +80,19 @@ Ongoing agent-instruction maintenance:
 │   └── coding_agent_dev_template/
 ├── tests/
 ├── skills/              # Optional source for shared Agent Skills
-├── specs/               # Optional feature-level SDD artifacts
+├── specs/               # Feature-level SDD artifacts, inventory, and templates
+│   ├── INDEX.md
+│   └── _template/
 ├── scripts/
 │   └── check_agent_docs_freshness.py
 ├── docs/
+│   ├── README.md
 │   ├── agent-context-stack.md
 │   ├── context-grounded-workflow-validation.md
 │   ├── agent-methodology.md
 │   ├── publication-readiness.md
 │   └── adr/
+│       └── README.md
 ├── .cursor/
 │   └── rules/
 └── .github/
@@ -101,6 +105,9 @@ Ongoing agent-instruction maintenance:
 - `skills/<name>/SKILL.md`: optional conditional workflows too long for always-loaded instructions.
 - `.claude/skills/<name>/SKILL.md`: Claude Code install target or Claude-specific skill location.
 - `DESIGN.md`: defines how UI should look.
+- `docs/README.md`: inventory and lifecycle rules for accumulating Markdown documents.
+- `docs/adr/README.md`: ADR list, status, and supersession map.
+- `specs/INDEX.md`: feature spec inventory with status, implementation links, and test links.
 - `specs/<feature>/spec.md`: optional feature-level requirements, plan, and task breakdown managed by SDD tooling.
 - `.kiro/specs/<feature>/requirements.md`, `design.md`, `tasks.md`: Kiro-specific spec artifacts.
 - `docs/adr/`: durable technical decisions and rationale.
@@ -118,7 +125,7 @@ Context order:
 
 1. Current user request and explicit constraints.
 2. `AGENTS.md`, `CLAUDE.md`, `.cursor/rules/*.mdc`.
-3. Feature specs in `specs/`, `.specify/`, `openspec/`, or `.kiro/specs/`.
+3. `specs/INDEX.md` and feature specs in `specs/`, `.specify/`, `openspec/`, or `.kiro/specs/`.
 4. `docs/adr/` and [agent-context-stack.md](docs/agent-context-stack.md).
 5. Existing code, tests, `pyproject.toml`, and CI.
 6. Optional Agent OS, Serena, AICTX, or repo-local memory.
@@ -142,6 +149,22 @@ uv run python scripts/check_agent_docs_freshness.py --staged
 
 GitHub Actions runs the same check for pull requests.
 
+## Markdown And Spec Lifecycle
+
+This template assumes Markdown files will accumulate. Durable context should be discoverable from the nearest inventory.
+
+| Document Type | Inventory | Management Rule |
+| --- | --- | --- |
+| General docs | `docs/README.md` | Track role, update trigger, and retirement rule. |
+| ADRs | `docs/adr/README.md` | Track ADR number, status, current decision, and supersession. |
+| Feature specs | `specs/INDEX.md` or OpenSpec/GitHub Spec Kit artifacts | Track feature boundary, status, implementation links, test links, and last review date. |
+
+Create specs by user-visible capability, integration, workflow, migration slice, or policy surface. Do not create one spec per PR, file, small refactor, daily task, or agent conversation. Use `proposed`, `active`, `implemented`, `superseded`, or `archived` as the lifecycle status.
+
+When a feature ships, keep the spec and mark it `implemented`, then link the implementation and tests. When a spec is replaced, mark it `superseded` and link the new spec or ADR. Prefer status changes over file moves; move old specs to `specs/archive/<year>/` only when search noise becomes higher than historical value.
+
+Small projects can keep `specs/INDEX.md` as a manual inventory. Projects that need lifecycle enforcement should prefer OpenSpec CLI commands such as `openspec validate --all --strict`, `openspec status`, and `openspec archive`, or GitHub Spec Kit validation extensions, instead of repo-local custom scripts.
+
 ## Spec-Driven Development Support
 
 In the coding-agent ecosystem, feature-level spec workflows are more active than a single root `SPEC.md`.
@@ -149,7 +172,7 @@ In the coding-agent ecosystem, feature-level spec workflows are more active than
 | Item | Support | Template Placement |
 | --- | --- | --- |
 | GitHub Spec Kit | `specify` CLI, agent integrations, Spec -> Plan -> Tasks -> Implement flow. | Primary candidate for cross-agent SDD. |
-| OpenSpec | Capability specs, change proposals, design notes, tasks, and spec deltas in the repo. | Useful for brownfield projects and change deltas. |
+| OpenSpec | Capability specs, change proposals, design notes, tasks, spec deltas, and lifecycle commands such as `validate`, `status`, and `archive`. | Useful for brownfield projects and change deltas. |
 | Kiro Specs | Kiro-managed requirements, design, and task artifacts. | Use when the project intentionally uses Kiro. |
 | root `SPEC.md` | Used by some community workflows, but meaning and paths vary. | Keep project-wide agent behavior in `AGENTS.md`; use feature-level specs for implementation contracts. |
 | specs.md, Spec Coding, SpecWeave | Methodologies and templates for SDD. | Optional references for team workflow design. |
@@ -159,6 +182,16 @@ Spec Kit example:
 ```powershell
 uvx --from git+https://github.com/github/spec-kit.git specify init . --integration claude
 uvx --from git+https://github.com/github/spec-kit.git specify integration install cursor-agent
+```
+
+OpenSpec example:
+
+```powershell
+npm install -g @fission-ai/openspec@latest
+openspec init --tools claude,cursor,codex
+openspec validate --all --strict
+openspec status
+openspec archive <change-name>
 ```
 
 `AGENTS.md` remains the agent operating contract. `.specify/memory/constitution.md` or `specs/<feature>/spec.md` are feature implementation contracts. Root `DESIGN.md` remains the Google DESIGN.md visual design system.
